@@ -36,7 +36,7 @@ class Buffer:
     """
     The memory buffer of rehearsal method.
     """
-    def __init__(self, buffer_size, device, n_tasks=1, mode='fifo'):
+    def __init__(self, buffer_size, device, n_tasks=1, mode='reservoir'):
         assert mode in ['ring', 'reservoir', 'fifo']
         self.buffer_size = buffer_size
         self.device = device
@@ -78,7 +78,7 @@ class Buffer:
             self.init_tensors(examples, labels, logits, task_labels)
 
         for i in range(examples.shape[0]):
-            index = fifo(self.num_seen_examples, self.buffer_size)
+            index = reservoir(self.num_seen_examples, self.buffer_size)
             self.num_seen_examples += 1
             if index >= 0:
                 self.examples[index] = examples[i].to(self.device)
